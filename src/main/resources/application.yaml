@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: talents-app
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+  profiles:
+    active: dev
