@@ -11,5 +11,5 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
 
     boolean existsByTitle(String title);
 
-    boolean existsByTitleAndIdNot(String title);
+    boolean existsByTitleAndIdNot(String title, Long id);
 }

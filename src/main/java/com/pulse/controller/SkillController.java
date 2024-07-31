@@ -69,6 +69,7 @@ public class SkillController {
             @RequestBody @Valid SkillRequest skillRequest
     ){
         return new ResponseEntity<>(
+                skillService.updateSkill(id, skillRequest),
                 HttpStatus.OK
         );
     }
@@ -78,6 +79,7 @@ public class SkillController {
     public ResponseEntity<?> deleteSkill(
             @PathVariable Long id
     ){
+        skillService.deleteSkill(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

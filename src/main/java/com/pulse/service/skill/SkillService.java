@@ -23,4 +23,8 @@ public interface SkillService {
     PageResponse<SkillResponse> getSkills(int page, int size);
 
     SkillResponse addSkill(SkillRequest skillRequest);
+
+    SkillResponse updateSkill(Long id, SkillRequest skillRequest);
+
+    void deleteSkill(Long id);
 }

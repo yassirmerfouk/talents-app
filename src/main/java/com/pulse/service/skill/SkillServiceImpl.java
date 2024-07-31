@@ -5,6 +5,7 @@ import com.pulse.dto.skill.SkillRequest;
 import com.pulse.dto.skill.SkillResponse;
 import com.pulse.dto.skill.SkillsRequest;
 import com.pulse.exception.custom.CustomException;
+import com.pulse.exception.custom.EntityNotFoundException;
 import com.pulse.mapper.SkillMapper;
 import com.pulse.model.Skill;
 import com.pulse.repository.SkillRepository;
@@ -74,7 +75,23 @@ public class SkillServiceImpl implements SkillService {
         return skillMapper.mapToSkillResponse(skill);
     }
 
-   /* public SkillResponse updateSkill(SkillRequest skillRequest){
+    @Override
+    public SkillResponse updateSkill(Long id,SkillRequest skillRequest){
+        Skill skill = skillRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Skill %d not found", id))
+        );
+        if(skillRepository.existsByTitleAndIdNot(skillRequest.getTitle(), id))
+            throw new CustomException("Skill title already exists, please choose another title.");
+        skill.setTitle(skillRequest.getTitle());
+        skillRepository.save(skill);
+        return skillMapper.mapToSkillResponse(skill);
+    }
 
-    }*/
+    @Override
+    public void deleteSkill(Long id){
+        Skill skill = skillRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Skill %d not found", id))
+        );
+        skillRepository.delete(skill);
+    }
 }
