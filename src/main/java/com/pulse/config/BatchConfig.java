@@ -47,8 +47,8 @@ public class BatchConfig {
     public ItemWriter<Suggestion> suggestionsWriter(){
 
         return suggestions -> suggestions.forEach(suggestion -> {
-/*            System.out.println(suggestion.getFirstName() + " " + suggestion.getLastName());
-            suggestion.getSuggestedJobs().forEach(job -> System.out.println(job.getId()));*/
+            System.out.println(suggestion.getFirstName() + " " + suggestion.getLastName());
+            suggestion.getSuggestedJobs().forEach(job -> System.out.println(job.getId()));
             suggestionProducer.sendSuggestion(suggestion);
         });
     }
