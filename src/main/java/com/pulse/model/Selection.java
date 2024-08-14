@@ -16,11 +16,15 @@ public class Selection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    private String sector;
     private String description;
     private LocalDateTime createdAt;
     private SelectionStatus status;
 
-    @OneToMany(mappedBy = "selection")
+    @ManyToOne
+    private Client client;
+
+    @OneToMany(mappedBy = "selection", cascade = CascadeType.ALL)
     private List<SelectionItem> selectionItems;
 
 }
