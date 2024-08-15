@@ -38,4 +38,6 @@ public class TalentRequest {
 
     private String address;
 
+    private boolean available;
+
 }

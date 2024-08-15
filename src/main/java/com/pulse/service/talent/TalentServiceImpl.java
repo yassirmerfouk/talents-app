@@ -104,4 +104,9 @@ public class TalentServiceImpl implements TalentService{
         return new PageResponse<>(talentResponses, page, size, talentPage.getTotalPages(), talentPage.getTotalElements());
     }
 
+    @Override
+    public List<TalentResponse> getTalentsByListOfIds(List<Long> ids){
+        return ids.stream().map(this::getTalentById).toList();
+    }
+
 }

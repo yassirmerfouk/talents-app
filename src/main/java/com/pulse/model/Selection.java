@@ -17,6 +17,7 @@ public class Selection {
     private Long id;
     private String title;
     private String sector;
+    @Column(length = 5000)
     private String description;
     private LocalDateTime createdAt;
     private SelectionStatus status;

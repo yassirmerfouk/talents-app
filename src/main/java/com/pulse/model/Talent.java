@@ -23,6 +23,7 @@ public class Talent extends User{
     private LocalDate dateOfBirth;
     private String city;
     private String address;
+    private boolean available;
 
     @OneToMany(mappedBy = "talent")
     private List<Experience> experiences;
@@ -49,5 +50,6 @@ public class Talent extends User{
         dateOfBirth = talent.dateOfBirth;
         city = talent.city;
         address = talent.address;
+        available = talent.available;
     }
 }

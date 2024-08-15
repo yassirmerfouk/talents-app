@@ -7,6 +7,7 @@ import com.pulse.dto.talent.TalentResponse;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TalentService {
@@ -19,4 +20,6 @@ public interface TalentService {
     TalentResponse getTalentById(Long id);
 
     PageResponse<TalentResponse> getTalents(String status, int page, int size);
+
+    List<TalentResponse> getTalentsByListOfIds(List<Long> ids);
 }

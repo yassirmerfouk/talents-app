@@ -97,4 +97,13 @@ public class SelectionController {
         selectionService.refuseSelection(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('CLIENT')")
+    public ResponseEntity<?> deleteSelection(
+            @PathVariable Long id
+    ){
+        selectionService.deleteSelection(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -22,4 +22,5 @@ public class TalentResponse {
     private LocalDate dateOfBirth;
     private String city;
     private String address;
+    private boolean available;
 }

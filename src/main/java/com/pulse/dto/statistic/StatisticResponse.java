@@ -12,4 +12,5 @@ public class StatisticResponse {
     private Long totalClients;
     private Long totalEnabledClients;
     private Long totalJobs;
+    private Long totalSelections;
 }

@@ -131,5 +131,15 @@ public class SelectionServiceImpl implements SelectionService{
         selectionRepository.save(selection);
     }
 
+    @Override
+    public void deleteSelection(Long id){
+        Selection selection = getSelection(id);
+        if(!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
+            throw new ForbiddenException();
+        if(selection.getStatus() != SelectionStatus.CREATED)
+            throw new CustomException("You can't delete this selection, status changed.");
+        selectionRepository.delete(selection);
+    }
+
 
 }

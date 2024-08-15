@@ -20,4 +20,6 @@ public interface SelectionService {
     void acceptSelection(Long id);
 
     void refuseSelection(Long id);
+
+    void deleteSelection(Long id);
 }
