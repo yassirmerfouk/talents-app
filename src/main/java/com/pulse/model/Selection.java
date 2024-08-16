@@ -28,4 +28,10 @@ public class Selection {
     @OneToMany(mappedBy = "selection", cascade = CascadeType.ALL)
     private List<SelectionItem> selectionItems;
 
+    public void copyProperties(Selection selection){
+        title = selection.title;
+        sector = selection.sector;
+        description = selection.description;
+    }
+
 }

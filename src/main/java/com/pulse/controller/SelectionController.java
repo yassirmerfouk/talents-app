@@ -1,6 +1,7 @@
 package com.pulse.controller;
 
 import com.pulse.dto.page.PageResponse;
+import com.pulse.dto.selection.ItemResponse;
 import com.pulse.dto.selection.SelectionRequest;
 import com.pulse.dto.selection.SelectionResponse;
 import com.pulse.service.selection.SelectionService;
@@ -105,5 +106,16 @@ public class SelectionController {
     ){
         selectionService.deleteSelection(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/item/{id}")
+    public ResponseEntity<ItemResponse> updateSelectionItem(
+            @PathVariable Long id,
+            @RequestBody ItemResponse itemResponse
+    ){
+        return new ResponseEntity<>(
+                selectionService.updateSelectionItem(id, itemResponse),
+                HttpStatus.OK
+        );
     }
 }

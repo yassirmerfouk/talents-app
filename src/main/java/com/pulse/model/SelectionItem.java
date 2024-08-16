@@ -21,4 +21,9 @@ public class SelectionItem {
 
     @ManyToOne
     private Talent talent;
+
+    public void copyProperties(SelectionItem selectionItem){
+        level = selectionItem.level;
+        report = selectionItem.report;
+    }
 }

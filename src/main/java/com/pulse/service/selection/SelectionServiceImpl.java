@@ -1,6 +1,7 @@
 package com.pulse.service.selection;
 
 import com.pulse.dto.page.PageResponse;
+import com.pulse.dto.selection.ItemResponse;
 import com.pulse.dto.selection.SelectionRequest;
 import com.pulse.dto.selection.SelectionResponse;
 import com.pulse.enumeration.SelectionStatus;
@@ -28,7 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SelectionServiceImpl implements SelectionService{
+public class SelectionServiceImpl implements SelectionService {
 
     private final SelectionRepository selectionRepository;
     private final SelectionItemRepository selectionItemRepository;
@@ -38,7 +39,7 @@ public class SelectionServiceImpl implements SelectionService{
     private final AuthenticationService authenticationService;
     private final TalentRepository talentRepository;
 
-    public Selection getSelection(Long id){
+    public Selection getSelection(Long id) {
         return selectionRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Selection %d not found.", id))
         );
@@ -69,76 +70,95 @@ public class SelectionServiceImpl implements SelectionService{
     }
 
     @Override
+    public SelectionResponse updateSelection(Long id, SelectionRequest selectionRequest) {
+        Selection selection = getSelection(id);
+        selection.copyProperties(selectionMapper.mapToSelection(selectionRequest));
+        selectionRepository.save(selection);
+        return selectionMapper.mapToFullSelectionResponse(selection);
+    }
+
+    @Override
     public PageResponse<SelectionResponse> getSelections(
             String status, int page, int size
-    ){
+    ) {
         Page<Selection> selectionPage;
-        if(status.equalsIgnoreCase("ALL"))
+        if (status.equalsIgnoreCase("ALL"))
             selectionPage = selectionRepository.findAll(
-                    PageRequest.of(page, size, Sort.by("createdAt"))
+                    PageRequest.of(page, size, Sort.by("createdAt").descending())
             );
         else
             selectionPage = selectionRepository.findByStatus(
                     SelectionStatus.valueOf(status),
-                    PageRequest.of(page, size, Sort.by("createdAt"))
+                    PageRequest.of(page, size, Sort.by("createdAt").descending())
             );
         List<SelectionResponse> selections = selectionPage.getContent().stream()
                 .map(selectionMapper::mapToSelectionResponse).toList();
-        return new PageResponse<>(selections, page, size,selectionPage.getTotalPages(), selectionPage.getTotalElements());
+        return new PageResponse<>(selections, page, size, selectionPage.getTotalPages(), selectionPage.getTotalElements());
     }
 
     @Override
-    public PageResponse<SelectionResponse> getSelectionsByClientId(Long clientId, int page, int size){
+    public PageResponse<SelectionResponse> getSelectionsByClientId(Long clientId, int page, int size) {
         Page<Selection> selectionPage = selectionRepository.findByClientId(
                 clientId, PageRequest.of(page, size, Sort.by("createdAt").descending())
         );
         List<SelectionResponse> selections = selectionPage.getContent().stream()
                 .map(selectionMapper::mapToSelectionResponse).toList();
-        return new PageResponse<>(selections, page, size,selectionPage.getTotalPages(), selectionPage.getTotalElements());
+        return new PageResponse<>(selections, page, size, selectionPage.getTotalPages(), selectionPage.getTotalElements());
     }
 
     @Override
     public PageResponse<SelectionResponse> getAuthenticatedClientSelections(
             int page, int size
-    ){
+    ) {
         return getSelectionsByClientId(authenticationService.getAuthenticatedUserId(), page, size);
     }
 
     @Override
-    public SelectionResponse getSelectionById(Long id){
+    public SelectionResponse getSelectionById(Long id) {
         Selection selection = getSelection(id);
-        if(!authenticationService.hasAuthority("ADMIN"))
-            if(!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
+        if (!authenticationService.hasAuthority("ADMIN"))
+            if (!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
                 throw new ForbiddenException();
         return selectionMapper.mapToFullSelectionResponse(selection);
     }
 
     @Override
-    public void acceptSelection(Long id){
+    public void acceptSelection(Long id) {
         Selection selection = getSelection(id);
-        if(selection.getStatus() != SelectionStatus.CREATED)
+        if (selection.getStatus() != SelectionStatus.CREATED)
             throw new CustomException("You can't accept this selection, status changed.");
         selection.setStatus(SelectionStatus.ACCEPTED);
         selectionRepository.save(selection);
     }
 
     @Override
-    public void refuseSelection(Long id){
+    public void refuseSelection(Long id) {
         Selection selection = getSelection(id);
-        if(selection.getStatus() != SelectionStatus.CREATED)
+        if (selection.getStatus() != SelectionStatus.CREATED)
             throw new CustomException("You can't refuse this selection, status changed.");
         selection.setStatus(SelectionStatus.REFUSED);
         selectionRepository.save(selection);
     }
 
     @Override
-    public void deleteSelection(Long id){
+    public void deleteSelection(Long id) {
         Selection selection = getSelection(id);
-        if(!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
+        if (!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
             throw new ForbiddenException();
-        if(selection.getStatus() != SelectionStatus.CREATED)
+        if (selection.getStatus() != SelectionStatus.CREATED)
             throw new CustomException("You can't delete this selection, status changed.");
         selectionRepository.delete(selection);
+    }
+
+    @Override
+    public ItemResponse updateSelectionItem(Long id, ItemResponse itemResponse) {
+        SelectionItem selectionItem = selectionItemRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Selection item not found."));
+        selectionItem.copyProperties(
+                SelectionItem.builder().level(itemResponse.getLevel()).report(itemResponse.getReport()).build()
+        );
+        selectionItemRepository.save(selectionItem);
+        return selectionMapper.mapSelectionItemToItemResponse(selectionItem);
     }
 
 
