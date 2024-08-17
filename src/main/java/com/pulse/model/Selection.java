@@ -20,6 +20,7 @@ public class Selection {
     @Column(length = 5000)
     private String description;
     private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
     private SelectionStatus status;
 
     @ManyToOne

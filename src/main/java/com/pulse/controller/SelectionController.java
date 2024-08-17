@@ -99,6 +99,24 @@ public class SelectionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/{id}/choosing")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> startChoosing(
+            @PathVariable Long id
+    ){
+        selectionService.startChoosing(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/close")
+    @PreAuthorize("hasAuthority('CLIENT')")
+    public ResponseEntity<?> closeSelection(
+            @PathVariable Long id
+    ){
+        selectionService.closeSelection(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('CLIENT')")
     public ResponseEntity<?> deleteSelection(
@@ -106,6 +124,15 @@ public class SelectionController {
     ){
         selectionService.deleteSelection(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/select-talent/{itemId}")
+    @PreAuthorize("hasAuthority('CLIENT')")
+    public ResponseEntity<?> selectTalent(
+          @PathVariable Long itemId
+    ){
+        selectionService.selectTalent(itemId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/item/{id}")

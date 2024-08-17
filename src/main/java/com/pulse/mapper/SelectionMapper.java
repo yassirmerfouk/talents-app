@@ -48,6 +48,7 @@ public class SelectionMapper {
     public ItemResponse mapSelectionItemToItemResponse(SelectionItem selectionItem) {
         ItemResponse itemResponse = new ItemResponse();
         BeanUtils.copyProperties(selectionItem, itemResponse);
+        itemResponse.setSelectionStatus(selectionItem.getSelection().getStatus());
         itemResponse.setTalent(userMapper.mapToTalentResponse(selectionItem.getTalent()));
         return itemResponse;
     }

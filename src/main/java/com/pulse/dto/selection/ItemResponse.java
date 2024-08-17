@@ -1,6 +1,7 @@
 package com.pulse.dto.selection;
 
 import com.pulse.dto.talent.TalentResponse;
+import com.pulse.enumeration.SelectionStatus;
 import lombok.*;
 
 @NoArgsConstructor
@@ -14,6 +15,8 @@ public class ItemResponse {
     private boolean selected;
     private String level;
     private String report;
+
+    private SelectionStatus selectionStatus;
 
     private TalentResponse talent;
 }

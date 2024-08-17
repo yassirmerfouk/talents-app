@@ -70,14 +70,6 @@ public class SelectionServiceImpl implements SelectionService {
     }
 
     @Override
-    public SelectionResponse updateSelection(Long id, SelectionRequest selectionRequest) {
-        Selection selection = getSelection(id);
-        selection.copyProperties(selectionMapper.mapToSelection(selectionRequest));
-        selectionRepository.save(selection);
-        return selectionMapper.mapToFullSelectionResponse(selection);
-    }
-
-    @Override
     public PageResponse<SelectionResponse> getSelections(
             String status, int page, int size
     ) {
@@ -141,6 +133,24 @@ public class SelectionServiceImpl implements SelectionService {
     }
 
     @Override
+    public void startChoosing(Long id) {
+        Selection selection = getSelection(id);
+        if (selection.getStatus() != SelectionStatus.ACCEPTED)
+            throw new CustomException("You can't start choosing for this selection, status changed.");
+        selection.setStatus(SelectionStatus.IN_CHOOSING);
+        selectionRepository.save(selection);
+    }
+
+    @Override
+    public void closeSelection(Long id) {
+        Selection selection = getSelection(id);
+        if (selection.getStatus() != SelectionStatus.IN_CHOOSING)
+            throw new CustomException("You can't start close this selection, status changed.");
+        selection.setStatus(SelectionStatus.CLOSED);
+        selectionRepository.save(selection);
+    }
+
+    @Override
     public void deleteSelection(Long id) {
         Selection selection = getSelection(id);
         if (!selection.getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
@@ -148,6 +158,18 @@ public class SelectionServiceImpl implements SelectionService {
         if (selection.getStatus() != SelectionStatus.CREATED)
             throw new CustomException("You can't delete this selection, status changed.");
         selectionRepository.delete(selection);
+    }
+
+    @Override
+    public void selectTalent(Long itemId){
+        SelectionItem selectionItem = selectionItemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Selection item not found."));
+        if(!selectionItem.getSelection().getClient().getId().equals(authenticationService.getAuthenticatedUserId()))
+            throw new ForbiddenException();
+        if(selectionItem.getSelection().getStatus() != SelectionStatus.IN_CHOOSING)
+            throw new CustomException("You can't select a talent, status changed.");
+        selectionItem.setSelected(!selectionItem.isSelected());
+        selectionItemRepository.save(selectionItem);
     }
 
     @Override
