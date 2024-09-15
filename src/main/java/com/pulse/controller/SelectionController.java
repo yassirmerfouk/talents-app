@@ -1,6 +1,7 @@
 package com.pulse.controller;
 
 import com.pulse.dto.page.PageResponse;
+import com.pulse.dto.selection.ItemRequest;
 import com.pulse.dto.selection.ItemResponse;
 import com.pulse.dto.selection.SelectionRequest;
 import com.pulse.dto.selection.SelectionResponse;
@@ -138,10 +139,10 @@ public class SelectionController {
     @PutMapping("/item/{id}")
     public ResponseEntity<ItemResponse> updateSelectionItem(
             @PathVariable Long id,
-            @RequestBody ItemResponse itemResponse
+            @RequestBody ItemRequest itemRequest
     ){
         return new ResponseEntity<>(
-                selectionService.updateSelectionItem(id, itemResponse),
+                selectionService.updateSelectionItem(id, itemRequest),
                 HttpStatus.OK
         );
     }

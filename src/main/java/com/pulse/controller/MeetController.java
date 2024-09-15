@@ -32,6 +32,17 @@ public class MeetController {
         );
     }
 
+    @PostMapping("/selection")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<MeetResponse> addSelectionMeet(
+            @RequestBody @Valid MeetRequest meetRequest
+    ){
+        return new ResponseEntity<>(
+                meetService.addSelectionMeet(meetRequest),
+                HttpStatus.CREATED
+        );
+    }
+
     @PostMapping("/{id}/close")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> closeMeet(
@@ -52,24 +63,6 @@ public class MeetController {
                 meetService.getMeets(date,page, size),
                 HttpStatus.OK
         );
-    }
-
-    @PostMapping("/{id}/accept")
-    @PreAuthorize("hasAnyAuthority('TALENT', 'CLIENT')")
-    public ResponseEntity<?> acceptMeet(
-            @PathVariable Long id
-    ){
-        meetService.acceptMeet(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/{id}/refuse")
-    @PreAuthorize("hasAnyAuthority('TALENT', 'CLIENT')")
-    public ResponseEntity<?> refuseMeet(
-            @PathVariable Long id
-    ){
-        meetService.refuseMeet(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

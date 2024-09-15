@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.pulse</groupId>
 	<artifactId>talents-app</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>talents-app</name>
 	<description>Back-end for talents recruitment solution</description>
 	<properties>

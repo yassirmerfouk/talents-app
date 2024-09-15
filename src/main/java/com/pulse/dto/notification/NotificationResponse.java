@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor @AllArgsConstructor @Setter @Getter @Builder
 public class NotificationResponse {
+
     private Long id;
     private String body;
     private NotificationType type;

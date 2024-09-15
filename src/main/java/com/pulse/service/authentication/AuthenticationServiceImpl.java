@@ -4,6 +4,8 @@ import com.pulse.amqp.producer.ActivationProducer;
 import com.pulse.amqp.producer.ResetPasswordProducer;
 import com.pulse.dto.authentication.AuthenticationRequest;
 import com.pulse.dto.authentication.AuthenticationResponse;
+import com.pulse.dto.email.Activation;
+import com.pulse.dto.email.ResetPassword;
 import com.pulse.dto.registration.ClientRegistrationRequest;
 import com.pulse.dto.registration.TalentRegistrationRequest;
 import com.pulse.dto.reset.ResetPasswordRequest;
@@ -126,7 +128,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         client.setRoles(List.of(role));
         userRepository.save(client);
         ConfirmationToken confirmationToken = confirmationService.generateConfirmationToken(client);
-        emailService.sendEmail(
+/*        emailService.sendEmail(
                 client.getEmail(),
                 EmailTemplateName.CONFIRM_ACCOUNT,
                 "Account confirmation",
@@ -135,14 +137,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         "confirmationCode", confirmationToken.getToken(),
                         "confirmationUrl", confirmationUrl
                 )
-        );
-/*        activationProducer.sendActivation(
+        );*/
+        activationProducer.sendActivation(
                 Activation.builder()
                         .email(client.getEmail())
                         .fullName(client.getFullName())
                         .confirmationCode(confirmationToken.getToken())
                         .build()
-        );*/
+        );
         return client.getId();
     }
 
@@ -158,7 +160,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         talent.setRoles(List.of(role));
         userRepository.save(talent);
         ConfirmationToken confirmationToken = confirmationService.generateConfirmationToken(talent);
-        emailService.sendEmail(
+        /*emailService.sendEmail(
                 talent.getEmail(),
                 EmailTemplateName.CONFIRM_ACCOUNT,
                 "Account confirmation",
@@ -167,14 +169,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         "confirmationCode", confirmationToken.getToken(),
                         "confirmationUrl", confirmationUrl
                 )
-        );
-        /*activationProducer.sendActivation(
+        );*/
+        activationProducer.sendActivation(
                 Activation.builder()
                         .email(talent.getEmail())
                         .fullName(talent.getFullName())
                         .confirmationCode(confirmationToken.getToken())
                         .build()
-        );*/
+        );
         return talent.getId();
     }
 
@@ -197,7 +199,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.isEnabled())
             throw new CustomException("Account disabled, can't reset password.");
         PasswordToken passwordToken = confirmationService.generatePasswordToken(user);
-        emailService.sendEmail(
+        /*emailService.sendEmail(
                 user.getEmail(),
                 EmailTemplateName.RESET_PASSWORD,
                 "Password reset",
@@ -205,14 +207,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         "fullName", user.getFullName(),
                         "resetPasswordUrl", passwordResetUrl + passwordToken.getToken() + "?email=" + user.getEmail()
                 )
-        );
-        /*resetPasswordProducer.sendResetPassword(
+        );*/
+        resetPasswordProducer.sendResetPassword(
                 ResetPassword.builder()
                         .email(user.getEmail())
                         .fullName(user.getFullName())
                         .token(passwordToken.getToken())
                         .build()
-        );*/
+        );
     }
 
     @Override

@@ -7,17 +7,10 @@ import jakarta.mail.MessagingException;
 
 public interface MeetService {
     MeetResponse addMeet(MeetRequest meetRequest) throws MessagingException;
-    void closeMeet(Long id);
-    void acceptMeet(Long id);
 
+    MeetResponse addSelectionMeet(MeetRequest meetRequest);
+
+    void closeMeet(Long id);
     PageResponse<MeetResponse> getMeets(String strDate, int page, int size);
 
-    void refuseMeet(Long id);
-
-   /*
-
-
-    void refuseMeet(Long id);
-
-   */
 }

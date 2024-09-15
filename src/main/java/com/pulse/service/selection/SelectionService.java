@@ -1,6 +1,7 @@
 package com.pulse.service.selection;
 
 import com.pulse.dto.page.PageResponse;
+import com.pulse.dto.selection.ItemRequest;
 import com.pulse.dto.selection.ItemResponse;
 import com.pulse.dto.selection.SelectionRequest;
 import com.pulse.dto.selection.SelectionResponse;
@@ -31,4 +32,6 @@ public interface SelectionService {
     void selectTalent(Long itemId);
 
     ItemResponse updateSelectionItem(Long id, ItemResponse itemResponse);
+
+    ItemResponse updateSelectionItem(Long id, ItemRequest itemRequest);
 }

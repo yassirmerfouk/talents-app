@@ -1,0 +1,104 @@
+version: "3.7"
+
+services:
+
+  backend:
+    image: talents-app-backend
+    container_name: talents-app-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Database connection properties
+      - DATASOURCE_URL=jdbc:mysql://talents-app-db:3306/talents
+      - DATASOURCE_USERNAME=root
+      - DATASOURCE_PASSWORD=root
+      # RabbitMQ environment properties
+      - RABBITMQ_HOST=talents-app-broker
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      # JAVA MAIL environment properties
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=merfoukyassir200@gmail.com
+      - MAIL_PASSWORD=hpjracbdjxewsmss
+      # Allowed origin in production
+      - ALLOWED_ORIGIN=http://localhost
+    networks:
+      talents-app-network:
+    depends_on:
+      db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+
+  backend-email-service:
+    image: talents-app-email-service
+    container_name: talents-app-email-service
+    ports:
+      - "9090:9090"
+    environment:
+      # RabbitMQ environment properties
+      - RABBITMQ_HOST=talents-app-broker
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      # JAVA MAIL environment properties
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=merfoukyassir200@gmail.com
+      - MAIL_PASSWORD=hpjracbdjxewsmss
+    networks:
+      talents-app-network:
+    depends_on:
+      broker:
+        condition: service_healthy
+
+  frontend:
+    image: talents-app-frontend
+    container_name: talents-app-frontend
+    ports:
+      - "80:80"
+    networks:
+      talents-app-network:
+
+  db:
+    image: mysql
+    container_name: talents-app-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=talents
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 20s
+      retries: 4
+    networks:
+      talents-app-network:
+    volumes:
+      - talents-app-db-data:/var/lib/mysql
+
+  broker:
+    image: rabbitmq:3.13-management
+    container_name: talents-app-broker
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 20s
+      retries: 4
+    networks:
+      talents-app-network:
+    volumes:
+      - talents-app-broker-data:/var/lib/rabbitmq
+
+networks:
+  talents-app-network:
+volumes:
+  talents-app-db-data:
+  talents-app-broker-data:

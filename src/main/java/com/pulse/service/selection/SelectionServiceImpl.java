@@ -1,6 +1,7 @@
 package com.pulse.service.selection;
 
 import com.pulse.dto.page.PageResponse;
+import com.pulse.dto.selection.ItemRequest;
 import com.pulse.dto.selection.ItemResponse;
 import com.pulse.dto.selection.SelectionRequest;
 import com.pulse.dto.selection.SelectionResponse;
@@ -178,6 +179,17 @@ public class SelectionServiceImpl implements SelectionService {
                 .orElseThrow(() -> new EntityNotFoundException("Selection item not found."));
         selectionItem.copyProperties(
                 SelectionItem.builder().level(itemResponse.getLevel()).report(itemResponse.getReport()).build()
+        );
+        selectionItemRepository.save(selectionItem);
+        return selectionMapper.mapSelectionItemToItemResponse(selectionItem);
+    }
+
+    @Override
+    public ItemResponse updateSelectionItem(Long id, ItemRequest itemRequest){
+        SelectionItem selectionItem = selectionItemRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Selection item not found."));
+        selectionItem.copyProperties(
+                SelectionItem.builder().level(itemRequest.getLevel()).report(itemRequest.getReport()).build()
         );
         selectionItemRepository.save(selectionItem);
         return selectionMapper.mapSelectionItemToItemResponse(selectionItem);

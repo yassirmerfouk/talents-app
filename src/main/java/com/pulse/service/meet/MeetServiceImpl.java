@@ -52,21 +52,40 @@ public class MeetServiceImpl implements MeetService {
         );
     }
 
-    @Override
-    public MeetResponse addMeet(MeetRequest meetRequest) throws MessagingException {
-
+    private List<User> verifyReceivers(MeetRequest meetRequest) {
         // VERIFY IF ALL RECEIVERS EXISTS
-        List<User> receivers = meetRequest.getReceivers().stream().map(
+        return meetRequest.getReceivers().stream().map(
                 receiverId -> userRepository.findById(receiverId).orElseThrow(
                         () -> new EntityNotFoundException(String.format("user %d not found", receiverId))
                 )
         ).toList();
+    }
+
+    private void verifySender(MeetRequest meetRequest){
         // VERIFY IF THE SENDER PUTS HIMSELF WITH THE RECEIVERS
         long counter = meetRequest.getReceivers().stream().filter(
                 receiverId -> receiverId.equals(authenticationService.getAuthenticatedUserId())
         ).count();
         if (counter > 0)
             throw new CustomException("You can't send meet to yourself.");
+    }
+
+    private Meet createMeet(MeetRequest meetRequest, List<User> receivers){
+        Meet meet = meetMapper.mapToMeet(meetRequest);
+        meet.setStatus(MeetStatus.CREATED);
+        meet.setSender(authenticationService.getAuthenticatedUser());
+        meet.setReceivers(receivers);
+        meetRepository.save(meet);
+        notificationService.sendMeetNotificationToUser(meet);
+        return meet;
+    }
+
+    @Override
+    public MeetResponse addMeet(MeetRequest meetRequest) throws MessagingException {
+
+        List<User> receivers = verifyReceivers(meetRequest);
+        verifySender(meetRequest);
+
         Application application = null;
         // VERIFICATION MEET CASE :
         if (meetRequest.getMeetType() == MeetType.VERIFICATION) {
@@ -105,6 +124,14 @@ public class MeetServiceImpl implements MeetService {
         if (application != null)
             applicationRepository.save(application);
         notificationService.sendMeetNotificationToUser(meet);
+        return meetMapper.mapToMeetResponse(meet);
+    }
+
+    @Override
+    public MeetResponse addSelectionMeet(MeetRequest meetRequest){
+        List<User> receivers = verifyReceivers(meetRequest);
+        verifySender(meetRequest);
+        Meet meet = createMeet(meetRequest, receivers);
         return meetMapper.mapToMeetResponse(meet);
     }
 
@@ -157,37 +184,4 @@ public class MeetServiceImpl implements MeetService {
         );
     }
 
-    public Meet verifyMeet(Long id) {
-        Meet meet = getMeet(id);
-        if (authenticationService.getAuthenticatedUser().getStatus() != VerificationStatus.VERIFIED)
-            throw new CustomException("You're not verified.");
-        long counter = meet.getReceivers().stream().filter(
-                receiver -> receiver.getId().equals(authenticationService.getAuthenticatedUserId())
-        ).count();
-        if (counter == 0)
-            throw new CustomException("You can't accept this meet your not a receiver part of it.");
-        if (meet.getMeetType() == MeetType.CLIENT_INTERVIEW) {
-            if (!authenticationService.hasAuthority("TALENT"))
-                throw new CustomException("You can't accept this meet you're not the talent part of it.");
-        }
-        if (meet.getDate().isBefore(LocalDateTime.now()))
-            throw new CustomException("You can't accept this meet, the date is passed.");
-        if (meet.getStatus() != MeetStatus.CREATED)
-            throw new CustomException("You can't accept this meet, the status is already changed.");
-        return meet;
-    }
-
-    @Override
-    public void acceptMeet(Long id) {
-        Meet meet = verifyMeet(id);
-        meet.setStatus(MeetStatus.ACCEPTED);
-        meetRepository.save(meet);
-    }
-
-    @Override
-    public void refuseMeet(Long id) {
-        Meet meet = verifyMeet(id);
-        meet.setStatus(MeetStatus.REFUSED);
-        meetRepository.save(meet);
-    }
 }

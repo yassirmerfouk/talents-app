@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +23,13 @@ public class LocationServiceImpl implements LocationService{
 
     public List<Map<String, Object>> getFullCities() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File(citiesFile), new TypeReference<List<Map<String, Object>>>() {});
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(citiesFile)) {
+            if (inputStream == null) {
+                throw new IllegalArgumentException(String.format("File not found in classpath: %s", citiesFile));
+            }
+            return mapper.readValue(inputStream, new TypeReference<List<Map<String, Object>>>() {});
+        }
     }
 
     @Override

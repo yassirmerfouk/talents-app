@@ -4,11 +4,127 @@ server:
     context-path: /api/v1
 
 spring:
+
   application:
     name: talents-app
+
   servlet:
     multipart:
       enabled: true
       max-file-size: 50MB
-  profiles:
-    active: dev
+
+  # database connection config
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/talents}
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:}
+
+  # jpa behavior config
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  # java mail config
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:merfoukyassir200@gmail.com}
+    password: ${MAIL_PASSWORD:hpjracbdjxewsmss}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # config to connect to rabbitmq server
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+  # batch config
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+# cloudinary config
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME:djcdpsyie}
+  api_key: ${CLOUDINARY_CLOUD_PASSWORD:626114823797125}
+  api_secret: ${CLOUDINARY_API_SECRET:sLt96EchLM8j5yfS6sOupogUfTQ}
+
+# jwt config
+jwt:
+  secret-key: ${JWT_SECRET_KEY:$2y$10$PO5X69nUUv02TkQABvi1buhZl1ELFjaV1Vmzs0hn2bQj0DDZ4/ooS}
+  life-time:
+    access-token: 60
+    refresh-token: 300
+
+# front-end urls
+frontend:
+  confirmation-url: ${FRONTEND_CONFIRMATION_URL:http://localhost:4200/auth/account/confirmation}
+  reset-password-url: ${FRONTEND_RESET_PASSWORD_URL:http://localhost:4200/auth/reset-password/}
+  job-url: ${FRONT_END_JOB_URL:http://localhost:4200/job/}
+
+cors:
+  allowed:
+    origin: ${ALLOWED_ORIGIN:http://localhost:4200}
+
+# config for suggestions queue
+suggestions:
+  queue: suggestions
+  exchange: suggestions
+  routing-key: suggestions
+
+# config for activation queue
+activation:
+  queue: activation
+  exchange: activation
+  routing-key: activation
+
+# config for reset-password queue
+reset-password:
+  queue: reset-password
+  exchange: reset-password
+  routing-key: reset-password
+
+# cities json file name
+cities:
+  file: moroccan.cities.json
+
+# error messages to display in some cases to not be hard codded in the classes
+error:
+  message:
+    bad-credentials: Email or Password incorrect
+    disabled-user: User account is disabled, please contact admin for more details
+
+# notifications messages to not hard code the messages in the classes
+notification:
+  message:
+    test: This is a test notification for you, please forget it.
+    meet: You have a [MEET TYPE] meet at [DATE]
+    verification-request: The [USER TYPE] [FIRST NAME] [LAST NAME] sent a verification request to the admins.
+    verification-confirmation: You have been verified by the admins, welcome to our platform.
+    job-start-process-request: Client [FIRST NAME] [LAST NAME] sent a request for starting his job process.
+    job-start-selection: Your job is in selection state now, admin will start selection of talents.
+    job-start-approving: Your job is in approving state now, please check the selected talents.
+    job-client-close: Client [FIRST NAME] [LAST NAME] has closed his job, please check the job.
+    job-admin-close: Your job has been closed by the admin, please check the job.
+    job-interview-request: Client [FIRST NAME] [LAST NAME] sent a request for interview with talent [FIRST NAME 2] [LAST NAME 2] for his job offer.
+
+uploads:
+  image:
+    path: uploads/talents/images
+
+talents:
+  images:
+    url: http://localhost:8080/api/v1/talents/image/
+
