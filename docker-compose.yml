@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   backend:
-    image: talents-app-backend
+    image: yassirmerfouk/talents-app-backend
     container_name: talents-app-backend
     ports:
       - "8080:8080"
@@ -33,7 +33,7 @@ services:
         condition: service_healthy
 
   backend-email-service:
-    image: talents-app-email-service
+    image: yassirmerfouk/talents-app-email-service
     container_name: talents-app-email-service
     ports:
       - "9090:9090"
@@ -55,7 +55,7 @@ services:
         condition: service_healthy
 
   frontend:
-    image: talents-app-frontend
+    image: yassirmerfouk/talents-app-frontend
     container_name: talents-app-frontend
     ports:
       - "80:80"
