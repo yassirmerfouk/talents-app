@@ -76,7 +76,9 @@ frontend:
 
 cors:
   allowed:
-    origin: ${ALLOWED_ORIGIN:http://localhost:4200}
+    origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+
+
 
 # config for suggestions queue
 suggestions:

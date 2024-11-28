@@ -23,7 +23,11 @@ services:
       - MAIL_USERNAME=merfoukyassir200@gmail.com
       - MAIL_PASSWORD=hpjracbdjxewsmss
       # Allowed origin in production
-      - ALLOWED_ORIGIN=http://localhost
+      - CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:80,http://pulse-talent.site
+      # FRONT URLS
+      - FRONTEND_CONFIRMATION_URL=http://pulse-talent.site/auth/account/confirmation
+      - FRONTEND_RESET_PASSWORD_URL=http://pulse-talent.site/auth/reset-password/
+      - FRONT_END_JOB_URL=http://pulse-talent.site/job/
     networks:
       talents-app-network:
     depends_on:
@@ -48,6 +52,10 @@ services:
       - MAIL_PORT=587
       - MAIL_USERNAME=merfoukyassir200@gmail.com
       - MAIL_PASSWORD=hpjracbdjxewsmss
+      # FRONT URLS
+      - FRONTEND_CONFIRMATION_URL=http://pulse-talent.site/auth/account/confirmation
+      - FRONTEND_RESET_PASSWORD_URL=http://pulse-talent.site/auth/reset-password/
+      - FRONT_END_JOB_URL=http://pulse-talent.site/job/
     networks:
       talents-app-network:
     depends_on:
